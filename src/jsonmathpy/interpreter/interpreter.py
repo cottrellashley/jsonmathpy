@@ -1,5 +1,5 @@
 
-from jsonmathpy.math_json import MathJSON
+from src.jsonmathpy.interpreter.math_json import MathJSON
 
 class Interpreter:
 

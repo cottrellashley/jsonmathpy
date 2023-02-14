@@ -1,5 +1,5 @@
-from jsonmathpy.interpreter.nodes import *
-from jsonmathpy.interpreter.types import TokenType
+from src.jsonmathpy.interpreter.nodes import *
+from src.jsonmathpy.interpreter.types import TokenType
 from more_itertools import peekable
 
 class Parser:

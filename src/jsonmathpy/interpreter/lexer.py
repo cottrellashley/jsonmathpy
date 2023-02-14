@@ -1,6 +1,6 @@
 import re
-from jsonmathpy.interpreter.token import *
-from jsonmathpy.interpreter.types import *
+from src.jsonmathpy.interpreter.token import *
+from src.jsonmathpy.interpreter.types import *
 from more_itertools import peekable
 
 WHITESPACE         = ' \n\t'
