@@ -139,6 +139,17 @@ class DifferentialNode:
         return f"differential({self.node_a}, {self.node_b})"
 
 @dataclass
+class FunctionNode:
+
+    def __init__(self, node_a, node_b):
+        self.node_a = node_a
+        self.node_b = node_b
+        self.dict = { "FUNCTION" : [self.node_a, self.node_b]}
+
+    def __repr__(self):
+        return f"({self.node_a}, {self.node_b})"
+
+@dataclass
 class EqualsNode:
 
     def __init__(self, node_a, node_b):

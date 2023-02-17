@@ -3,10 +3,6 @@ from src.jsonmathpy.interpreter.math_json import MathJSON
 
 class Interpreter:
 
-    def compute(self, node):
-        if type(node).__name__ == 'AddNode':
-            return MathJSON(node.node_a.dict)+MathJSON(node.node_a.dict)
-
     def visit(self, node):
         if isinstance(node, list):
             return [getattr(self, f"visit_{type(i).__name__}")(i).dict for i in node]

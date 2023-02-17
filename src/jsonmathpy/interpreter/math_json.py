@@ -3,25 +3,49 @@ class MathJSON:
         self.dict = dict
         
     def __add__(self, other):
-        return MathJSON({ 'ADD' : [self.dict, other.dict] })
+        return MathJSON({
+            "operation": "ADD",
+            "arguments": [self.dict, other.dict]
+        })
     
     def __mul__(self, other):
-        return MathJSON({ 'MUL' : [self.dict, other.dict] })
+        return MathJSON({
+            "operation": "MULTIPLY",
+            "arguments": [self.dict, other.dict]
+        })
     
     def __sub__(self, other):
-        return MathJSON({ 'MINUS' : [self.dict, other.dict] })
+        return MathJSON({
+            "operation": "MINUS",
+            "arguments": [self.dict, other.dict]
+        })
 
     def __pow__(self, other):
-        return MathJSON({ 'POW' : [self.dict, other.dict] })
+        return MathJSON({
+            "operation": "POWER",
+            "arguments": [self.dict, other.dict]
+        })
     
     def __truediv__(self, other):
-        return MathJSON({ 'DIV' : [self.dict, other.dict] })
+        return MathJSON({
+            "operation": "DIVISION",
+            "arguments": [self.dict, other.dict]
+        })
 
     def func(self, variables):
-        return MathJSON({ 'FUNCTION' : [self.dict, variables.dict]})
+        return MathJSON({
+            "operation": "FUNCTION",
+            "arguments": [self.dict, variables.dict]
+        })
 
     def integrate(self, measure):
-        return MathJSON({ 'INT' : [self.dict, measure.dict ]})
+        return MathJSON({
+            "operation": "INTEGRAL",
+            "arguments": [self.dict, measure.dict]
+        })
 
     def differentiate(self, measure):
-        return MathJSON({ 'DIFF' : [self.dict, measure.dict ]})
+        return MathJSON({
+            "operation": "DIFFERENTIAL",
+            "arguments": [self.dict, measure.dict]
+        })

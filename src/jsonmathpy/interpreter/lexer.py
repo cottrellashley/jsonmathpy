@@ -7,7 +7,7 @@ WHITESPACE         = ' \n\t'
 DIGITS             = '0987654321'
 LOWERCASES         = 'abcdefghijklmnopqrstuvwxyz'
 UPPERCASES         = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-CHARS              = UPPERCASES + LOWERCASES + DIGITS
+CHARS              = UPPERCASES + LOWERCASES
 CHARACTERS         = '{}[]_^=.:'
 OBJECT_CHARACTERS  = CHARACTERS + UPPERCASES + LOWERCASES + DIGITS
 
@@ -32,6 +32,7 @@ class Lexer:
     def __init__(self, text):
         self.text = peekable(text)
         self.advance()
+        self.tokens = []
 
     def advance(self):
         try:
@@ -41,38 +42,63 @@ class Lexer:
 
     def generate_tokens(self):
         while self.current_char != None:
-            # If the current character is a empty space or new line, then move on to the next character.
+
             if self.current_char in WHITESPACE:
                 self.advance()
-            # If the current character is a . or a digit, then we should keep iterating through while its still a number.
-            # When we do not have a .09090 OR 1212.1313 OR 23213 when we stop and returns a number Token, then continue the lexer.
-            elif self.current_char == '.' or self.current_char in CHARS:
-                yield self.generate_object()
+
+            elif self.current_char in CHARS:
+                self.generate_object()
+
+            elif self.current_char in DIGITS:
+                self.generate_number()
+
             elif self.current_char == '+':
                 self.advance()
-                yield Token(TokenType.PLUS, None)
+                self.tokens.append(Token(TokenType.PLUS, None))
+
             elif self.current_char == '*':
-                yield self.generate_operation()
+                self.generate_operation()
+
             elif self.current_char == '-':
                 self.advance()
-                yield Token(TokenType.MINUS, None)
+                self.tokens.append(Token(TokenType.MINUS, None))
+
             elif self.current_char == '/':
                 self.advance()
-                yield Token(TokenType.DIVIDE, None)
+                self.tokens.append(Token(TokenType.DIVIDE, None))
+
             elif self.current_char == '(':
                 self.advance()
-                yield Token(TokenType.LPAREN, None)
+                self.tokens.append(Token(TokenType.LPAREN, None))
+
             elif self.current_char == ')':
                 self.advance()
-                yield Token(TokenType.RPAREN, None)
+                self.tokens.append(Token(TokenType.RPAREN, None))
+
             elif self.current_char == '=':
                 self.advance()
-                yield Token(TokenType.EQUALS, None)
+                self.tokens.append(Token(TokenType.EQUALS, None))
+    
             elif self.current_char == ',':
                 self.advance()
-                yield Token(TokenType.COMMA, None)
+                self.tokens.append(Token(TokenType.COMMA, None))
+
             else:
                 raise Exception(f"Illegal Character '{self.current_char}'")
+        return self.tokens
+
+    def generate_number(self):
+        num = ''
+        while self.current_char != None and (self.current_char in DIGITS or self.current_char == '.'):
+            num += self.current_char
+            self.advance()
+        count = num.count('.')
+        if count == 0:
+            self.tokens.append(Token(TokenType.INTEGER, num))
+        elif count == 1:
+            self.tokens.append(Token(TokenType.FLOAT, num))
+        else:
+            raise Exception(f"Illegal Character '{num}'")
 
     def generate_operation(self):
         num = ''
@@ -80,39 +106,34 @@ class Lexer:
             num += self.current_char
             self.advance()
         if num.count('*') == 1:
-            return Token(TokenType.MULTIPLY, None)
+            self.tokens.append(Token(TokenType.MULTIPLY, None))
         elif num.count('*') == 2:
-            return Token(TokenType.POW, None)
+            self.tokens.append(Token(TokenType.POW, None))
         else:
             raise Exception(f"Illegal Character '{num}'")
 
     def generate_object(self):
-        obj_str = self.current_char
-        self.advance()
+        obj = ''
         while self.current_char != None and self.current_char in OBJECT_CHARACTERS:
             if self.current_char in CHARS and self.text.peek() == '(':
-                obj_str += self.current_char
+                obj += self.current_char
                 self.advance()
-                if re.match(regex_integral, obj_str):
-                    return Token(TokenType.INTEGRAL, obj_str)
-                elif re.match(regex_diff, obj_str):
-                    return Token(TokenType.DIFFERENTIAL, obj_str)
-                elif re.match(regex_solve, obj_str):
-                    return Token(TokenType.SOLVER, obj_str)
+                if re.match(regex_integral, obj):
+                    self.tokens.append(Token(TokenType.INTEGRAL, obj))
+                elif re.match(regex_diff, obj):
+                    self.tokens.append(Token(TokenType.DIFFERENTIAL, obj))
+                elif re.match(regex_solve, obj):
+                    self.tokens.append(Token(TokenType.SOLVER, obj))
                 else:
-                    return Token(TokenType.FUNCTION, obj_str)
-            else:
-                obj_str += self.current_char
+                    self.tokens.append(Token(TokenType.FUNCTION, obj))
+            elif self.text.peek() not in OBJECT_CHARACTERS + '(':
+                obj += self.current_char
                 self.advance()
-
-        if match_tensors(obj_str):
-            return Token(TokenType.TENSOR, obj_str)
-
-        elif re.match(re_integer, obj_str):
-            return Token(TokenType.INTEGER, int(obj_str))
-
-        elif re.match(re_variable, obj_str):
-            return Token(TokenType.VARIABLE, obj_str)
-
-        elif re.match(re_float, obj_str):
-            return Token(TokenType.FLOAT, float(obj_str))
+                if match_tensors(obj):
+                    self.tokens.append(Token(TokenType.TENSOR, obj))
+                elif re.match(re_variable, obj):
+                    self.tokens.append(Token(TokenType.VARIABLE, obj))
+            else:
+                obj += self.current_char
+                self.advance()
+            
