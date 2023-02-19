@@ -180,4 +180,17 @@ class Parser:
                 self.raise_error("Syntax Error, expecting a RPAREN token.")
             self.advance()
             return DifferentialNode(expression_to_integrate, wrt_variables)
+        elif token.type == TokenType.FUNCTION:
+            func_name = token.value
+            self.advance()
+            if self.current_token.type != TokenType.LPAREN:
+                self.raise_error("Syntax Error, expecting a LPAREN token.")
+            self.advance()
+            if self.current_token.type != TokenType.VARIABLE:
+                self.raise_error("Expected a variable here.")
+            wrt_variables = self.find_variables()
+            if self.current_token.type != TokenType.RPAREN:
+                self.raise_error("Syntax Error, expecting a RPAREN token.")
+            self.advance()
+            return FunctionNode(VariableNode(func_name), wrt_variables)
         self.raise_error("Syntax Error")
