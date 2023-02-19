@@ -16,7 +16,7 @@ Bugs will be fixed.
 HOW TO USE:
 
 Import Mathyfy into your Python code.
-Enter an equation as a string, for example: '2+4*7'.
+Enter an equation as a string, for example: `Mathify('2+4*7')()`.
 Use Mathyfy to convert the string into a dictionary, such as:
 ```
 {
@@ -67,7 +67,7 @@ INJECTING YOUR OWN OPERATIONS:
 You can however overide how the Evaluate class handles each of the arguments, such as:
 
 String: 
-```'diff(x**2, x) + g_{mu}_{nu}'```
+```Mathify('diff(x**2, x) + g_{mu}_{nu}')()```
 
 Output:
 ```
@@ -121,6 +121,18 @@ OPERATION_CLASSES = {
                         "BUILD_TENSOR"      : Tensor
                     }
 ```
+
+Having:
+
+```
+MathInterpreter(
+                    math_op             = <Your equation dictionary>, 
+                    operation_classes   = OPERATION_CLASSES
+                ).evaluate()
+```
+
+Now when the `evaluate()` method us called, the `MathInterpreter` class will use your own classes, which you have defined how you want to handle, say a derivative operation in `OPERATION_CLASSES`.
+
 CREDIT:
 
 Mathyfy is an extension of the code to a more general calculator for any math object. The package was inspired by CodePulse's YouTube tutorial on "Writing a Simple Math Interpreter". It is the author's first time writing a simple language.
