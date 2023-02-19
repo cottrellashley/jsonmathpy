@@ -1,11 +1,7 @@
 
-from jsonmathpy.math_json import MathJSON
+from src.jsonmathpy.interpreter.math_json import MathJSON
 
 class Interpreter:
-
-    def compute(self, node):
-        if type(node).__name__ == 'AddNode':
-            return MathJSON(node.node_a.dict)+MathJSON(node.node_a.dict)
 
     def visit(self, node):
         if isinstance(node, list):
@@ -15,36 +11,39 @@ class Interpreter:
             method = getattr(self, method_name)
             return method(node)
 
-    def visit_IntNode(self, node):
-        return MathJSON(node.dict)
+    def visit_IntNode(self, node) -> MathJSON:
+        return MathJSON({}).build_int(node.value)
 
-    def visit_FloatNode(self, node):
-        return MathJSON(node.dict)
+    def visit_FloatNode(self, node) -> MathJSON:
+        return MathJSON({}).build_float(node.value)
 
-    def visit_TensorNode(self, node):
-        return MathJSON(node.dict)
+    def visit_TensorNode(self, node) -> MathJSON:
+        return MathJSON({}).build_tensor(node.value)
 
-    def visit_VariableNode(self, node):
-        return MathJSON(node.dict)
+    def visit_VariableNode(self, node) -> MathJSON:
+        return MathJSON({}).build_variable(node.value)
 
-    def visit_PowNode(self, node):
+    def visit_PowNode(self, node) -> MathJSON:
         return MathJSON(self.visit(node.node_a).dict) ** MathJSON(self.visit(node.node_b).dict)
 
-    def visit_AddNode(self, node):
+    def visit_AddNode(self, node) -> MathJSON:
         return MathJSON(self.visit(node.node_a).dict) + MathJSON(self.visit(node.node_b).dict)
 
-    def visit_SubNode(self, node):
+    def visit_SubNode(self, node) -> MathJSON:
         return MathJSON(self.visit(node.node_a).dict) - MathJSON(self.visit(node.node_b).dict)
 
-    def visit_MulNode(self, node):
+    def visit_MulNode(self, node) -> MathJSON:
         return MathJSON(self.visit(node.node_a).dict) * MathJSON(self.visit(node.node_b).dict)
 
-    def visit_DivNode(self, node):
+    def visit_DivNode(self, node) -> MathJSON:
         return MathJSON(self.visit(node.node_a).dict) / MathJSON(self.visit(node.node_b).dict)
 
-    def visit_DifferentialNode(self, node):
+    def visit_DifferentialNode(self, node) -> MathJSON:
         return MathJSON(self.visit(node.node_a).dict).differentiate(MathJSON(self.visit(node.node_b)))
 
-    def visit_IntegrateNode(self, node):
+    def visit_IntegrateNode(self, node) -> MathJSON:
         return MathJSON(self.visit(node.node_a).dict).integrate(MathJSON(self.visit(node.node_b)))
+
+    def visit_FunctionNode(self, node) -> MathJSON:
+        return MathJSON(self.visit(node.node_a).dict).function(MathJSON(self.visit(node.node_b)))
 

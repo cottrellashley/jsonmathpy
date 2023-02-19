@@ -1,7 +1,8 @@
 [project]
 name = "jsonmathpy"
-version = "0.3.4"
+version = "0.3.5"
 description = "A math json package which parses strings into math json objects."
+long_description = "A math json package which parses strings into math json objects."
 
 [dependencies]
 regex = "^2021.4.4"

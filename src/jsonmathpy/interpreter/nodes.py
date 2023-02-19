@@ -5,7 +5,10 @@ class PlusNode:
 
     def __init__(self, node):
         self.node = node
-        self.dict = { "POSITIVE" : str(self.node)}
+        self.dict = { 
+                        "operation": "POSITIVE" ,
+                        "argument" : str(self.node)
+                    }
 
     def __repr__(self):
         return f"(+{self.node})"
@@ -15,7 +18,10 @@ class MinusNode:
 
     def __init__(self, node):
         self.node = node
-        self.dict = { "NEGATIVE" : str(self.node)}
+        self.dict = { 
+                        "operation": "NEGATION" ,
+                        "argument" : str(self.node)
+                    }
 
     def __repr__(self):
         return f"(-{self.node})"
@@ -25,7 +31,6 @@ class TensorNode:
     
     def __init__(self, value):
         self.value = value
-        self.dict = { "TENSOR" : str(self.value)}
 
     def __repr__(self):
         return f"({self.value})"
@@ -35,7 +40,6 @@ class VariableNode:
 
     def __init__(self, value):
         self.value = value
-        self.dict = { "VAR" : str(self.value)}
 
     def __repr__(self):
         return f"{self.value}"
@@ -45,7 +49,6 @@ class IntNode:
 
     def __init__(self, value):
         self.value = value
-        self.dict = { "NUMBER_INT" : str(self.value)}
 
     def __repr__(self):
         return f"({self.value})"
@@ -55,7 +58,6 @@ class FloatNode:
 
     def __init__(self, value):
         self.value = value
-        self.dict = { "NUMBER_FLOAT" : str(self.value)}
 
     def __repr__(self):
         return f"({self.value})"
@@ -66,7 +68,6 @@ class AddNode:
     def __init__(self, node_a, node_b):
         self.node_a = node_a
         self.node_b = node_b
-        self.dict = { "ADD" : [self.node_a, self.node_b]}
 
 
     def __repr__(self):
@@ -78,7 +79,6 @@ class SubNode:
     def __init__(self, node_a, node_b):
         self.node_a = node_a
         self.node_b = node_b
-        self.dict = { "MINUS" : [self.node_a, self.node_b]}
 
     def __repr__(self):
         return f"({self.node_a} - {self.node_b})"
@@ -89,7 +89,6 @@ class MulNode:
     def __init__(self, node_a, node_b):
         self.node_a = node_a
         self.node_b = node_b
-        self.dict= { "MULTIPLY" : [self.node_a, self.node_b]}
 
     def __repr__(self):
         return f"({self.node_a} * {self.node_b})"
@@ -100,7 +99,6 @@ class PowNode:
     def __init__(self, node_a, node_b):
         self.node_a = node_a
         self.node_b = node_b
-        self.dict= { "POW" : [self.node_a, self.node_b]}
 
     def __repr__(self):
         return f"({self.node_a} ^ {self.node_b})"
@@ -111,7 +109,6 @@ class DivNode:
     def __init__(self, node_a, node_b):
         self.node_a = node_a
         self.node_b = node_b
-        self.dict = { "DIV" : [self.node_a, self.node_b]}
 
     def __repr__(self):
         return f"({self.node_a} / {self.node_b})"
@@ -122,7 +119,6 @@ class IntegrateNode:
     def __init__(self, node_a, node_b):
         self.node_a = node_a
         self.node_b = node_b
-        self.dict = { "INT" : [self.node_a, self.node_b]}
 
     def __repr__(self):
         return f"integrate({self.node_a}, {self.node_b})"
@@ -133,10 +129,19 @@ class DifferentialNode:
     def __init__(self, node_a, node_b):
         self.node_a = node_a
         self.node_b = node_b
-        self.dict = { "DIFF" : [self.node_a, self.node_b]}
 
     def __repr__(self):
         return f"differential({self.node_a}, {self.node_b})"
+
+@dataclass
+class FunctionNode:
+
+    def __init__(self, node_a, node_b):
+        self.node_a = node_a
+        self.node_b = node_b
+
+    def __repr__(self):
+        return f"({self.node_a}, {self.node_b})"
 
 @dataclass
 class EqualsNode:
@@ -144,7 +149,6 @@ class EqualsNode:
     def __init__(self, node_a, node_b):
         self.node_a = node_a
         self.node_b = node_b
-        self.dict = { "EQUALITY" : [self.node_a, self.node_b]}
 
     def __repr__(self):
         return f"{self.node_a} = {self.node_b}"
