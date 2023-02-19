@@ -1,11 +1,15 @@
 DESCRIPTION:
 
-Mathyfy is a Python package that can take a string as input and convert it into a JSON math file. The package can parse and evaluate expressions using the operations and objects injected by the user.
+Mathyfy is a Python package that can take a string as input and parse it into a python dictionary, (and if you want a JSON math file). The package can parse and evaluate expressions using the operations and objects injected by the user.
+
+WHY DOES THIS EXIST?
+
+I have created a package for General Relativistic calculations, and needed a general purpose language which was scalable for any future mathematical operation and would easily allow me to store user inputs in a database such as CosmosDB/MongoDB. 
 
 CURRENT FEATURES:
 
-Mathyfy: A method to parse a string and return a Python dictionary representing the equation.
-Evaluate: A method to evaluate the expressions based on the injected objects entered by the user that handle the operations.
+1. `Mathyfy`: Will parse a string and return a Python dictionary representing the equation.
+2. `MathInterpreter`: Will evaluate the python dictionary based on the injected objects entered by the user that handle the operations. Or on the default operation pre-defined classes.
 
 FUTURE FEATURES:
 
@@ -132,6 +136,10 @@ MathInterpreter(
 ```
 
 Now when the `evaluate()` method us called, the `MathInterpreter` class will use your own classes, which you have defined how you want to handle, say a derivative operation in `OPERATION_CLASSES`.
+
+BUGS:
+
+Currenctly there are lots of bugs, and errors are not handled well. The goal will be to write tests and make sure all use cases have elegant error handling. This is a work in progress.
 
 CREDIT:
 
