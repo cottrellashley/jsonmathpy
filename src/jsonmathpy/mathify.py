@@ -14,3 +14,4 @@ class Mathify:
         par = Parser(lex).parse()
         intt = Interpreter().visit(par)
         return intt.dict
+
