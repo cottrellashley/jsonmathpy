@@ -18,7 +18,7 @@ HOW TO USE:
 Import Mathyfy into your Python code.
 Enter an equation as a string, for example: '2+4*7'.
 Use Mathyfy to convert the string into a dictionary, such as:
-
+```
 {
     "operation": "ADD",
     "arguments": [
@@ -41,7 +41,7 @@ Use Mathyfy to convert the string into a dictionary, such as:
         }
     ]
 }
-
+```
 The structure here is always consistent with:
 {
     "operation" : "OPERATION",
