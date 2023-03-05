@@ -13,7 +13,6 @@ During the creation of [RelativisticPy](https://github.com/cottrellashley/relati
 
 ### USE EXAMPLES:
 
-<<<<<<< HEAD
 Install package:
 ```
 pip install jsonmathpy
@@ -31,11 +30,6 @@ Use Mathyfy:
 jmp.Mathyfy("2+4*7")()
 ```
 Output:
-=======
-Import Mathyfy into your Python code.
-Enter an equation as a string, for example: '2+4*7'.
-Use Mathyfy to convert the string into a dictionary, such as:
->>>>>>> 23dcf89 (Update README.md)
 ```
 {
     "operation": "ADD",
@@ -60,12 +54,8 @@ Use Mathyfy to convert the string into a dictionary, such as:
     ]
 }
 ```
-<<<<<<< HEAD
 The structure here will always be consistent with:
 ```
-=======
-The structure here is always consistent with:
->>>>>>> 23dcf89 (Update README.md)
 {
     "operation" : "OPERATION",
     "argument"  : [LIST of JSON MATH OBJECTS]
@@ -214,7 +204,6 @@ custom_operations = {
 
 Having:
 
-<<<<<<< HEAD
 ```
 jmp.MathJSONInterpreter(
                     math_op             = <Your equation dictionary>, 
@@ -232,6 +221,3 @@ Now when the evaluate() method us called, the MathJSONInterpreter class will use
 ### CREDIT:
 
 Before this project I knew nothing of writing Lexers, Parsers or Interpreters. CodePulse's YouTube tutorial on "Writing a Simple Math Interpreter" was what I used to build upon.
-=======
-Mathyfy is an extension of the code to a more general calculator for any math object. The package was inspired by CodePulse's YouTube tutorial on "Writing a Simple Math Interpreter". It is the author's first time writing a simple language.
->>>>>>> 23dcf89 (Update README.md)
