@@ -16,15 +16,15 @@ class PlusNode:
 @dataclass
 class MinusNode:
 
-    def __init__(self, node):
-        self.node = node
+    def __init__(self, value):
+        self.value = value
         self.dict = { 
                         "operation": "NEGATION" ,
-                        "argument" : str(self.node)
+                        "argument" : str(self.value)
                     }
 
     def __repr__(self):
-        return f"(-{self.node})"
+        return f"(-{self.value})"
 
 @dataclass
 class TensorNode:
@@ -152,3 +152,13 @@ class EqualsNode:
 
     def __repr__(self):
         return f"{self.node_a} = {self.node_b}"
+
+
+@dataclass
+class ArrayNode:
+
+    def __init__(self, node):
+        self.node = node
+        
+    def __repr__(self):
+        return f"[{self.node}]"

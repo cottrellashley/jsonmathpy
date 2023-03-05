@@ -79,3 +79,15 @@ class MathJSON:
             "operation": "BUILD_VARIABLE",
             "arguments": str(variable_repr)
         })
+
+    def build_minus(self, object):
+        return MathJSON({
+            "operation": "BUILD_MINUS",
+            "arguments": [object.dict]
+        })
+
+    def array(self, objects):
+        return MathJSON({
+            "operation": "ARRAY",
+            "arguments": objects
+        })

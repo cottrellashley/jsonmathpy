@@ -1,15 +1,15 @@
-[project]
+[tool.poetry]
 name = "jsonmathpy"
-version = "0.3.5"
+version = "1.1.8"
 description = "A math json package which parses strings into math json objects."
-long_description = "A math json package which parses strings into math json objects."
-
-[dependencies]
-regex = "^2021.4.4"
-more_itertools = "^8.4.0"
-numpy = "^1.1.1"
-sympy = "^1.7.0"
+authors = ["Ashley Cottrell"]
 
 [build-system]
-requires = ["setuptools>=40.8.0", "wheel", "regex", "more_itertools", "numpy", "sympy"]
+requires = ["setuptools>=40.8.0", "wheel", "more_itertools", "numpy", "sympy"]
 build-backend = "setuptools.build_meta"
+
+[tool.poetry.dependencies]
+setuptools = "^58.0.4"
+python = "^3.9"
+wheel = "^0.37.0"
+more_itertools = "^8.4.0"

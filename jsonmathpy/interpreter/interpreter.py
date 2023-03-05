@@ -1,5 +1,4 @@
-
-from src.jsonmathpy.interpreter.math_json import MathJSON
+from jsonmathpy.interpreter.math_json import MathJSON
 
 class Interpreter:
 
@@ -13,6 +12,12 @@ class Interpreter:
 
     def visit_IntNode(self, node) -> MathJSON:
         return MathJSON({}).build_int(node.value)
+
+    def visit_ArrayNode(self, node) -> MathJSON:
+        return MathJSON({}).array(self.visit(node.node))
+
+    def visit_MinusNode(self, node) -> MathJSON:
+        return MathJSON({}).build_minus(self.visit(node.value))
 
     def visit_FloatNode(self, node) -> MathJSON:
         return MathJSON({}).build_float(node.value)

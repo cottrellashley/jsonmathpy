@@ -1,5 +1,5 @@
-from src.jsonmathpy.interpreter.nodes import *
-from src.jsonmathpy.interpreter.types import TokenType
+from jsonmathpy.interpreter.nodes import *
+from jsonmathpy.interpreter.types import TokenType
 from more_itertools import peekable
 
 class Parser:
@@ -193,4 +193,16 @@ class Parser:
                 self.raise_error("Syntax Error, expecting a RPAREN token.")
             self.advance()
             return FunctionNode(VariableNode(func_name), wrt_variables)
+        elif token.type == TokenType.OPEN_SQUARE_BRACE:
+            self.advance()
+            elements = []
+            if self.current_token.type != TokenType.CLOSED_SQUARE_BRACE:
+                elements.append(self.expr())
+                while self.current_token != None and self.current_token.type == TokenType.COMMA:
+                    self.advance()
+                    elements.append(self.expr())
+            if self.current_token.type != TokenType.CLOSED_SQUARE_BRACE:
+                self.raise_error("Syntax Error, expecting a CLOSED_SQUARE_BRACE token.")
+            self.advance()
+            return ArrayNode(elements)
         self.raise_error("Syntax Error")
