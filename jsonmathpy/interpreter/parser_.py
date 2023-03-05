@@ -1,6 +1,24 @@
 from jsonmathpy.interpreter.nodes import *
 from jsonmathpy.interpreter.types import TokenType
+from jsonmathpy.interpreter.types import TRIG_FUNCTIONS
+from jsonmathpy.interpreter.types import HYPERBOLIC_FUNCTIONS
 from more_itertools import peekable
+
+def function_map(key):
+    return {
+        "SIN" : lambda arg : SinNode(arg),
+        "COS" : lambda arg : CosNode(arg),
+        "TAN" : lambda arg : TanNode(arg),
+        "ASIN" : lambda arg : ASinNode(arg),
+        "ACOS" : lambda arg : ACosNode(arg),
+        "ATAN" : lambda arg : ATanNode(arg),
+        "SINH" : lambda arg : SinhNode(arg),
+        "COSH" : lambda arg : CoshNode(arg),
+        "TANH" : lambda arg : TanhNode(arg),
+        "ASINH" : lambda arg : ASinhNode(arg),
+        "ACOSH" : lambda arg : ACoshNode(arg),
+        "ATANH" : lambda arg : ATanhNode(arg)
+    }[key]
 
 class Parser:
 
@@ -45,24 +63,6 @@ class Parser:
         if self.current_token != None:
             self.raise_error("Syntax Error")
         return result
-
-    def find_variables(self):
-        """
-        Helper method to find and extract variables from the input.
-
-        Returns:
-            A list of VariableNodes representing the extracted variables.
-        """
-        tokens = []
-        if self.current_token.type != TokenType.VARIABLE:
-            self.raise_error("Syntax Error, expecting a VARIABLE token.")
-        tokens.append(self.object())
-        while self.current_token != None and self.current_token.type == TokenType.COMMA:
-            self.advance()
-            if self.current_token.type != TokenType.VARIABLE:
-                self.raise_error("Syntax Error, expecting a VARIABLE token.")
-            tokens.append(self.object())
-        return tokens
 
     def expr(self):
         """
@@ -149,60 +149,216 @@ class Parser:
         elif token.type == TokenType.MINUS:
             self.advance()
             return MinusNode(self.object())
-        #########################################
-        # | BELLOW NEEDS IMPROVEMENT | From here on, there woll be a lot of repeated code, which can be wraped in a single function call.
-        #########################################
         elif token.type == TokenType.INTEGRAL:
             self.advance()
-            if self.current_token.type != TokenType.LPAREN:
-                self.raise_error("Syntax Error, expecting a LPAREN token.")
+            return self.integral_node()
+        elif token.type == TokenType.SOLVE:
             self.advance()
-            expression_to_integrate = self.expr()
-            if self.current_token.type != TokenType.COMMA:
-                self.raise_error("Syntax Error, expecting a COMMA token.")
+            return self.solve_node()
+        elif token.type == TokenType.LIMIT:
             self.advance()
-            wrt_variables = self.find_variables()
-            if self.current_token.type != TokenType.RPAREN:
-                self.raise_error("Syntax Error, expecting a RPAREN token.")
+            return self.limit_node()
+        elif token.type == TokenType.PLOT:
             self.advance()
-            return IntegrateNode(expression_to_integrate, wrt_variables)
+            return self.plot_node()
+        elif token.type == TokenType.NUMERICAL:
+            self.advance()
+            return self.numerical_node()
+        elif token.type == TokenType.SERIES:
+            self.advance()
+            return self.series_node()
+        elif token.type == TokenType.SIMPLIFY:
+            self.advance()
+            return self.simplify_node()
+        elif token.type == TokenType.EXPAND:
+            self.advance()
+            return self.expand_node()
         elif token.type == TokenType.DIFFERENTIAL:
             self.advance()
-            if self.current_token.type != TokenType.LPAREN:
-                self.raise_error("Syntax Error, expecting a LPAREN token.")
-            self.advance()
-            expression_to_integrate = self.expr()
-            if self.current_token.type != TokenType.COMMA:
-                self.raise_error("Syntax Error, expecting a COMMA token.")
-            self.advance()
-            wrt_variables = self.find_variables()
-            if self.current_token.type != TokenType.RPAREN:
-                self.raise_error("Syntax Error, expecting a RPAREN token.")
-            self.advance()
-            return DifferentialNode(expression_to_integrate, wrt_variables)
+            return self.differential_node()
         elif token.type == TokenType.FUNCTION:
             func_name = token.value
             self.advance()
-            if self.current_token.type != TokenType.LPAREN:
-                self.raise_error("Syntax Error, expecting a LPAREN token.")
-            self.advance()
-            if self.current_token.type != TokenType.VARIABLE:
-                self.raise_error("Expected a variable here.")
-            wrt_variables = self.find_variables()
-            if self.current_token.type != TokenType.RPAREN:
-                self.raise_error("Syntax Error, expecting a RPAREN token.")
-            self.advance()
-            return FunctionNode(VariableNode(func_name), wrt_variables)
+            return self.function_node(func_name)
         elif token.type == TokenType.OPEN_SQUARE_BRACE:
             self.advance()
-            elements = []
-            if self.current_token.type != TokenType.CLOSED_SQUARE_BRACE:
-                elements.append(self.expr())
-                while self.current_token != None and self.current_token.type == TokenType.COMMA:
-                    self.advance()
-                    elements.append(self.expr())
-            if self.current_token.type != TokenType.CLOSED_SQUARE_BRACE:
-                self.raise_error("Syntax Error, expecting a CLOSED_SQUARE_BRACE token.")
+            return self.array_node()
+        elif (token.type in TRIG_FUNCTIONS) or (token.type in HYPERBOLIC_FUNCTIONS):
+            function_name = token.type.name
             self.advance()
-            return ArrayNode(elements)
+            return self.trig_function_node(function_name)
         self.raise_error("Syntax Error")
+
+    ########################################################################
+    ############################# HELPERS ##################################
+    ########################################################################
+
+    def integral_node(self):
+        if self.current_token.type != TokenType.LPAREN:
+            self.raise_error("Syntax Error, expecting a LPAREN token.")
+        self.advance()
+        expression_to_integrate = self.expr()
+        if self.current_token.type != TokenType.COMMA:
+            self.raise_error("Syntax Error, expecting a COMMA token.")
+        self.advance()
+        wrt_variables = self.find_context_variables()
+        if self.current_token.type != TokenType.RPAREN:
+            self.raise_error("Syntax Error, expecting a RPAREN token.")
+        self.advance()
+        return IntegrateNode(expression_to_integrate, wrt_variables)
+
+    def differential_node(self):
+        if self.current_token.type != TokenType.LPAREN:
+            self.raise_error("Syntax Error, expecting a LPAREN token.")
+        self.advance()
+        expression_to_integrate = self.expr()
+        if self.current_token.type != TokenType.COMMA:
+            self.raise_error("Syntax Error, expecting a COMMA token.")
+        self.advance()
+        wrt_variables = self.find_context_variables()
+        if self.current_token.type != TokenType.RPAREN:
+            self.raise_error("Syntax Error, expecting a RPAREN token.")
+        self.advance()
+        return DifferentialNode(expression_to_integrate, wrt_variables)
+
+    def function_node(self, func_name):
+        if self.current_token.type != TokenType.LPAREN:
+            self.raise_error("Syntax Error, expecting a LPAREN token.")
+        self.advance()
+        if self.current_token.type != TokenType.VARIABLE:
+            self.raise_error("Expected a variable here.")
+        wrt_variables = self.find_context_variables()
+        if self.current_token.type != TokenType.RPAREN:
+            self.raise_error("Syntax Error, expecting a RPAREN token.")
+        self.advance()
+        return FunctionNode(VariableNode(func_name), wrt_variables)
+
+    def solve_node(self):
+        if self.current_token.type != TokenType.LPAREN:
+            self.raise_error("Syntax Error, expecting a LPAREN token.")
+        self.advance()
+        expression_to_integrate = self.expr()
+        if self.current_token.type != TokenType.COMMA:
+            self.raise_error("Syntax Error, expecting a COMMA token.")
+        self.advance()
+        wrt_variables = self.find_context_variables()
+        if self.current_token.type != TokenType.RPAREN:
+            self.raise_error("Syntax Error, expecting a RPAREN token.")
+        self.advance()
+        return IntegrateNode(expression_to_integrate, wrt_variables)
+
+    def limit_node(self):
+        if self.current_token.type != TokenType.LPAREN:
+            self.raise_error("Syntax Error, expecting a LPAREN token.")
+        self.advance()
+        expression_to_integrate = self.expr()
+        if self.current_token.type != TokenType.COMMA:
+            self.raise_error("Syntax Error, expecting a COMMA token.")
+        self.advance()
+        wrt_variables = self.find_context_variables()
+        if self.current_token.type != TokenType.RPAREN:
+            self.raise_error("Syntax Error, expecting a RPAREN token.")
+        self.advance()
+        return IntegrateNode(expression_to_integrate, wrt_variables)
+    
+    def plot_node(self):
+        if self.current_token.type != TokenType.LPAREN:
+            self.raise_error("Syntax Error, expecting a LPAREN token.")
+        self.advance()
+        expression_to_integrate = self.expr()
+        if self.current_token.type != TokenType.COMMA:
+            self.raise_error("Syntax Error, expecting a COMMA token.")
+        self.advance()
+        wrt_variables = self.find_context_variables()
+        if self.current_token.type != TokenType.RPAREN:
+            self.raise_error("Syntax Error, expecting a RPAREN token.")
+        self.advance()
+        return IntegrateNode(expression_to_integrate, wrt_variables)
+
+    def numerical_node(self):
+        if self.current_token.type != TokenType.LPAREN:
+            self.raise_error("Syntax Error, expecting a LPAREN token.")
+        self.advance()
+        expression_to_integrate = self.expr()
+        if self.current_token.type != TokenType.COMMA:
+            self.raise_error("Syntax Error, expecting a COMMA token.")
+        self.advance()
+        wrt_variables = self.find_context_variables()
+        if self.current_token.type != TokenType.RPAREN:
+            self.raise_error("Syntax Error, expecting a RPAREN token.")
+        self.advance()
+        return IntegrateNode(expression_to_integrate, wrt_variables)
+
+    def series_node(self):
+        if self.current_token.type != TokenType.LPAREN:
+            self.raise_error("Syntax Error, expecting a LPAREN token.")
+        self.advance()
+        expression_to_integrate = self.expr()
+        if self.current_token.type != TokenType.COMMA:
+            self.raise_error("Syntax Error, expecting a COMMA token.")
+        self.advance()
+        wrt_variables = self.find_context_variables()
+        if self.current_token.type != TokenType.RPAREN:
+            self.raise_error("Syntax Error, expecting a RPAREN token.")
+        self.advance()
+        return IntegrateNode(expression_to_integrate, wrt_variables)
+
+    def simplify_node(self):
+        if self.current_token.type != TokenType.LPAREN:
+            self.raise_error("Syntax Error, expecting a LPAREN token.")
+        self.advance()
+        expression = self.expr()
+        if self.current_token.type != TokenType.RPAREN:
+            self.raise_error("Syntax Error, expecting a RPAREN token.")
+        self.advance()
+        return SimplifyNode(expression)
+
+    def expand_node(self):
+        if self.current_token.type != TokenType.LPAREN:
+            self.raise_error("Syntax Error, expecting a LPAREN token.")
+        self.advance()
+        expression = self.expr()
+        if self.current_token.type != TokenType.RPAREN:
+            self.raise_error("Syntax Error, expecting a RPAREN token.")
+        self.advance()
+        return ExpandNode(expression)
+
+    def trig_function_node(self, function_name):
+        if self.current_token.type != TokenType.LPAREN:
+            self.raise_error("Syntax Error, expecting a LPAREN token.")
+        self.advance()
+        expression = self.expr()
+        if self.current_token.type != TokenType.RPAREN:
+            self.raise_error("Syntax Error, expecting a RPAREN token.")
+        self.advance()
+        return function_map(function_name)(expression)
+
+    def array_node(self):
+        elements = []
+        if self.current_token.type != TokenType.CLOSED_SQUARE_BRACE:
+            elements.append(self.expr())
+            while self.current_token != None and self.current_token.type == TokenType.COMMA:
+                self.advance()
+                elements.append(self.expr())
+        if self.current_token.type != TokenType.CLOSED_SQUARE_BRACE:
+            self.raise_error("Syntax Error, expecting a CLOSED_SQUARE_BRACE token.")
+        self.advance()
+        return ArrayNode(elements)
+
+    def find_context_variables(self):
+        """
+        Helper method to find and extract variables from the input.
+
+        Returns:
+            A list of VariableNodes representing the extracted variables.
+        """
+        tokens = []
+        if self.current_token.type != TokenType.VARIABLE:
+            self.raise_error("Syntax Error, expecting a VARIABLE token.")
+        tokens.append(self.object())
+        while self.current_token != None and self.current_token.type == TokenType.COMMA:
+            self.advance()
+            if self.current_token.type != TokenType.VARIABLE:
+                self.raise_error("Syntax Error, expecting a VARIABLE token.")
+            tokens.append(self.object())
+        return tokens

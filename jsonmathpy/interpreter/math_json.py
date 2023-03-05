@@ -86,8 +86,82 @@ class MathJSON:
             "arguments": [object.dict]
         })
 
-    def array(self, objects):
+    def array(self, objects : list):
+        "Expects an list of MathJSON objects, or Nodes."
         return MathJSON({
             "operation": "ARRAY",
             "arguments": objects
         })
+
+    def sin(self):
+        return MathJSON({
+            "operation": "SIN",
+            "arguments": [self.dict]
+        })
+
+    def cos(self):
+        return MathJSON({
+            "operation": "COS",
+            "arguments": [self.dict]
+        })
+
+    def tan(self):
+        return MathJSON({
+            "operation": "TAN",
+            "arguments": [self.dict]
+        })
+
+    def asin(self):
+        return MathJSON({
+            "operation": "ASIN",
+            "arguments": [self.dict]
+        })
+
+    def acos(self):
+        return MathJSON({
+            "operation": "ACOS",
+            "arguments": [self.dict]
+        })
+
+    def atan(self):
+        return MathJSON({
+            "operation": "ATAN",
+            "arguments": [self.dict]
+        })
+
+    def sinh(self):
+        return MathJSON({
+            "operation": "SINH",
+            "arguments": [self.dict]
+        })
+
+    def cosh(self):
+        return MathJSON({
+            "operation": "COSH",
+            "arguments": [self.dict]
+        })
+
+    def tanh(self):
+        return MathJSON({
+            "operation": "TANH",
+            "arguments": [self.dict]
+        })
+
+    def asinh(self):
+        return MathJSON({
+            "operation": "ASINH",
+            "arguments": [self.dict]
+        })
+
+    def acosh(self):
+        return MathJSON({
+            "operation": "ACOSH",
+            "arguments": [self.dict]
+        })
+
+    def atanh(self):
+        return MathJSON({
+            "operation": "ATANH",
+            "arguments": [self.dict]
+        })
+
