@@ -1,6 +1,6 @@
-### DESCRIPTION:
+# JsonMathPy
 
-Mathyfy is a Python package that can take a string as input and parse it into a python dictionary, (and if you want a JSON math file). The package can parse and evaluate expressions using the operations and objects injected by the user.
+[JsonMathPy](https://pypi.org/project/jsonmathpy/) is a Python package that can take a string as input and parse it into a python dictionary, (and if you want a JSON math file). The package can parse and evaluate expressions using the operations and objects injected by the user.
 
 ### WHY DOES THIS EXIST?
 
