@@ -96,7 +96,6 @@ You can however overide how the Evaluate class handles each of the arguments, su
 ```
 String: Mathify('diff(x**2, x) + g_{mu}_{nu}')()
 ```
-```
 
 Output:
 ```
