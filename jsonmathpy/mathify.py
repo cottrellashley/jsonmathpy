@@ -1,7 +1,6 @@
-from src.jsonmathpy.interpreter.interpreter import Interpreter
-from src.jsonmathpy.interpreter.lexer import Lexer
-from src.jsonmathpy.interpreter.parser_ import Parser
-
+from jsonmathpy.interpreter.interpreter import Interpreter
+from jsonmathpy.interpreter.lexer import Lexer
+from jsonmathpy.interpreter.parser_ import Parser
 
 
 class Mathify:

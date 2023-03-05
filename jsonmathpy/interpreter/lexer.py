@@ -1,6 +1,6 @@
 import re
-from src.jsonmathpy.interpreter.token import *
-from src.jsonmathpy.interpreter.types import *
+from jsonmathpy.interpreter.token import *
+from jsonmathpy.interpreter.types import *
 from more_itertools import peekable
 
 WHITESPACE         = ' \n\t'
@@ -8,7 +8,7 @@ DIGITS             = '0987654321'
 LOWERCASES         = 'abcdefghijklmnopqrstuvwxyz'
 UPPERCASES         = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 CHARS              = UPPERCASES + LOWERCASES
-CHARACTERS         = '{}[]_^=.:'
+CHARACTERS         = '{}_^=.:'
 OBJECT_CHARACTERS  = CHARACTERS + UPPERCASES + LOWERCASES + DIGITS
 
 re_float           = '^(\d+)(\.)(\d+)$'
@@ -38,7 +38,6 @@ class Lexer:
 
     def advance(self):
         try:
-            self.text.peek()
             self.current_char = next(self.text)
         except StopIteration:
             self.current_char = None
@@ -58,6 +57,14 @@ class Lexer:
             elif self.current_char == '+':
                 self.advance()
                 self.tokens.append(Token(TokenType.PLUS, None))
+
+            elif self.current_char == ']':
+                self.advance()
+                self.tokens.append(Token(TokenType.CLOSED_SQUARE_BRACE, None))
+
+            elif self.current_char == '[':
+                self.advance()
+                self.tokens.append(Token(TokenType.OPEN_SQUARE_BRACE, None))
 
             elif self.current_char == '*':
                 self.generate_operation()

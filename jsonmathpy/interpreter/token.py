@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from src.jsonmathpy.interpreter.types import TokenType
+from jsonmathpy.interpreter.types import TokenType
 
 
 @dataclass
