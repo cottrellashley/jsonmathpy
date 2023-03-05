@@ -4,7 +4,9 @@
 
 ### WHY DOES THIS EXIST?
 
+
 During the creation of [RelativisticPy](https://github.com/cottrellashley/relativisticpy), I needed to be able to deserialize equations and modularize the operations (seperating the concerns) to make things simpler, more scalable and compatible with databases.
+
 
 ### CURRENT FEATURES:
 
@@ -12,6 +14,7 @@ During the creation of [RelativisticPy](https://github.com/cottrellashley/relati
 - `MathJSONInterpreter:` Will evaluate the python dictionary based on the injected objects entered by the user that handle the operations. Or on the default operation pre-defined classes.
 
 ### USE EXAMPLES:
+
 
 Install package:
 ```
@@ -30,6 +33,7 @@ Use Mathyfy:
 jmp.Mathyfy("2+4*7")()
 ```
 Output:
+
 ```
 {
     "operation": "ADD",
@@ -54,7 +58,9 @@ Output:
     ]
 }
 ```
+
 The structure here will always be consistent with:
+
 ```
 {
     "operation" : "OPERATION",
@@ -79,17 +85,21 @@ DEFAULT_OPERATION_CLASSES = {
 "DIVISION": Division
 }
 ```
+
 The Multiply class is responsible for handling the "MULTIPLY" operation. These are the build in default classes.
+
 
 INJECTING YOUR OWN OPERATIONS:
 
 You can however overide how the Evaluate class handles each of the arguments, such as:
+
 ```
 String: Mathify('diff(x**2, x) + g_{mu}_{nu}')()
 ```
 ```
-Output:
 
+Output:
+```
 {
     "operation": "ADD",
     "arguments": [
@@ -205,6 +215,7 @@ custom_operations = {
 Having:
 
 ```
+
 jmp.MathJSONInterpreter(
                     math_op             = <Your equation dictionary>, 
                     operation_classes   = custom_operations
@@ -218,6 +229,8 @@ Now when the evaluate() method us called, the MathJSONInterpreter class will use
 - Unit tests.
 - Error Handling (Ability to show user where and what the error is.)
 
+
 ### CREDIT:
 
 Before this project I knew nothing of writing Lexers, Parsers or Interpreters. CodePulse's YouTube tutorial on "Writing a Simple Math Interpreter" was what I used to build upon.
+
